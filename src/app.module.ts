@@ -4,6 +4,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { AppService } from './app.service';
+import { UsersModule } from './users/users.module';
+import { User } from './users/entities/user.entity';
 
 @Module({
   imports: [
@@ -24,7 +26,7 @@ import { AppService } from './app.service';
             database: config.getOrThrow<string>('DATABASE_NAME'),
             username: config.getOrThrow<string>('DATABASE_USER'),
             password: config.getOrThrow<string>('DATABASE_PASSWORD'),
-            entities: [],
+            entities: [User],
             logger: 'file',
             logging: false,
             synchronize: true,
@@ -40,6 +42,7 @@ import { AppService } from './app.service';
       }),
       inject: [ConfigService],
     }),
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
