@@ -16,7 +16,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('signup')
-  @ApiOperation({ summary: 'Used to signup a new student' })
+  @ApiOperation({ summary: 'Used to signup a new user' })
   @ApiCreatedResponse({
     description: 'Created Successfully',
     type: Token,
