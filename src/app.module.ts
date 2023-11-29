@@ -6,6 +6,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
+import { GeneralModule } from './general/general.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { User } from './users/entities/user.entity';
       inject: [ConfigService],
     }),
     UsersModule,
+    GeneralModule,
   ],
   controllers: [AppController],
   providers: [AppService],
