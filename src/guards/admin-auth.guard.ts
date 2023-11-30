@@ -25,7 +25,7 @@ export class AdminAuthGuard implements CanActivate {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: this.configService.getOrThrow('JWT_SECRET'),
       });
-      if (payload.role !== 'admin') {
+      if (payload.role !== 'Admin') {
         throw new UnauthorizedException('Unauthorized access not admin');
       }
       // 💡 I'm assigning the payload to the request object here

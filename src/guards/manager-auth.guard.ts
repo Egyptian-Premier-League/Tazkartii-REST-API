@@ -25,7 +25,7 @@ export class ManagerAuthGuard implements CanActivate {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: this.configService.getOrThrow('JWT_SECRET'),
       });
-      if (payload.role !== 'manager') {
+      if (payload.role !== 'Manager') {
         throw new UnauthorizedException('Unauthorized access not manager');
       }
       // 💡 I'm assigning the payload to the request object here
