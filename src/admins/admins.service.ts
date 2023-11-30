@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Admin } from './entities/admin.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -77,6 +81,31 @@ export class AdminsService {
     return {
       accessToken: token,
       role: 'Admin',
+    };
+  }
+
+  async signin(username: string, password: string) {
+    const admin = await this.findAdminByUsername(username);
+    if (!admin) throw new NotFoundException('Admin not found');
+
+    const [salt, storedHash] = admin.password.split('.');
+
+    const hash = (await scrypt(password, salt, 32)) as Buffer;
+
+    if (storedHash !== hash.toString('hex'))
+      throw new BadRequestException('Wrong username and password');
+
+    const payload = {
+      userId: admin.id,
+      username: admin.username,
+      role: 'Admin',
+    };
+    console.log('Returning Admin token');
+    const token = await this.jwtService.signAsync(payload);
+    return {
+      accessToken: token,
+      role: 'Admin',
+      approved: true,
     };
   }
 }
