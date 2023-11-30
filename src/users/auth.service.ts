@@ -4,12 +4,14 @@ import { UsersService } from './users.service';
 import { JwtService } from '@nestjs/jwt';
 import { randomBytes, scrypt as _scrypt } from 'crypto';
 import { promisify } from 'util';
+import { AdminsService } from 'src/admins/admins.service';
 const scrypt = promisify(_scrypt);
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UsersService,
+    private adminService: AdminsService,
     private jwtService: JwtService,
   ) {}
 
@@ -18,12 +20,14 @@ export class AuthService {
       throw new BadRequestException("Passwords didn't match");
 
     let user = await this.userService.findUserByUsername(userData.username);
+    let admin = await this.adminService.findAdminByUsername(userData.username);
 
-    if (user) throw new BadRequestException('Username is in use');
+    if (user || admin) throw new BadRequestException('Username is in use');
 
     user = await this.userService.findUserByEmail(userData.email);
+    admin = await this.adminService.findAdminByEmail(userData.email);
 
-    if (user) throw new BadRequestException('Email is in use');
+    if (user || admin) throw new BadRequestException('Email is in use');
 
     // Generate a salt
     const salt = randomBytes(8).toString('hex');
