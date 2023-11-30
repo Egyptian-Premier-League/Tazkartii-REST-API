@@ -45,8 +45,6 @@ export class AuthService {
     userData.password = resultPassword;
     const createdUser = await this.userService.createUser(userData);
 
-    console.log(createdUser);
-
     const payload = {
       userId: createdUser.id,
       username: createdUser.username,

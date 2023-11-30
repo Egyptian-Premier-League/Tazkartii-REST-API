@@ -7,6 +7,10 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
 import { GeneralModule } from './general/general.module';
+import { AdminsModule } from './admins/admins.module';
+import { Admin } from './admins/entities/admin.entity';
+import { SeedModule } from './seed/seed.module';
+import { AdminSeed } from './seed/admin.seed';
 
 @Module({
   imports: [
@@ -27,7 +31,7 @@ import { GeneralModule } from './general/general.module';
             database: config.getOrThrow<string>('DATABASE_NAME'),
             username: config.getOrThrow<string>('DATABASE_USER'),
             password: config.getOrThrow<string>('DATABASE_PASSWORD'),
-            entities: [User],
+            entities: [User, Admin],
             logger: 'file',
             logging: false,
             synchronize: true,
@@ -45,8 +49,16 @@ import { GeneralModule } from './general/general.module';
     }),
     UsersModule,
     GeneralModule,
+    AdminsModule,
+    SeedModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private readonly adminSeed: AdminSeed) {}
+
+  async onApplicationBootstrap(): Promise<void> {
+    await this.adminSeed.seedAdmin();
+  }
+}

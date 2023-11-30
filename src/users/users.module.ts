@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { AdminsModule } from 'src/admins/admins.module';
 
 @Module({
   controllers: [UsersController, AuthController],
@@ -20,6 +21,7 @@ import { ConfigService } from '@nestjs/config';
       }),
       inject: [ConfigService],
     }),
+    AdminsModule,
   ],
 })
 export class UsersModule {}
