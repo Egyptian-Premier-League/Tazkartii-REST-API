@@ -38,6 +38,11 @@ export class AdminsService {
     return this.adminRepository.findOne({ where: { email: ILike(email) } });
   }
 
+  findAdminById(id: number) {
+    if (!id) return null;
+    return this.adminRepository.findOne({ where: { id: id } });
+  }
+
   findUserByUsername(username: string) {
     if (!username) return null;
     return this.userRepository.findOne({
