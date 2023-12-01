@@ -10,6 +10,7 @@ import {
   UseGuards,
   Query,
   ParseEnumPipe,
+  BadRequestException,
 } from '@nestjs/common';
 import { CreateAdminDto } from './dtos/create-admin.dto';
 import { AdminsService, ApprovedOption, RolesOption } from './admins.service';
@@ -129,6 +130,10 @@ export class AdminsController {
     @Query('role', new ParseEnumPipe(RolesOption)) role: string,
     @Query('approved', new ParseEnumPipe(ApprovedOption)) approved: string,
   ) {
+    if (page < 1)
+      throw new BadRequestException(
+        'Validation failed (numeric string is expected)',
+      );
     return this.adminService.getUsers(page, role, approved);
   }
 }
