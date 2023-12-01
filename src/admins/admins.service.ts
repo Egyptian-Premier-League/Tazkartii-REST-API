@@ -13,6 +13,17 @@ import { promisify } from 'util';
 import { JwtService } from '@nestjs/jwt';
 const scrypt = promisify(_scrypt);
 
+export enum RolesOption {
+  Manager = 'Manager',
+  Fan = 'Fan',
+  All = 'All',
+}
+
+export enum ApprovedOption {
+  true = 'true',
+  false = 'false',
+  All = 'All',
+}
 @Injectable()
 export class AdminsService {
   constructor(
@@ -135,5 +146,24 @@ export class AdminsService {
     await this.userRepository.save(user);
 
     return { message: 'User Approved Succesfully' };
+  }
+
+  async getUsers(page: number, role: string, approved: string) {
+    const MAX_NUMBER_PER_PAGE = 10;
+    const skip = (page - 1) * MAX_NUMBER_PER_PAGE;
+    const findOption = {
+      skip: skip,
+      take: MAX_NUMBER_PER_PAGE,
+      where: {},
+    };
+    if (role !== RolesOption.All)
+      findOption.where = { ...findOption.where, role: role };
+
+    if (approved === ApprovedOption.true)
+      findOption.where = { ...findOption.where, approved: true };
+    else if (approved === ApprovedOption.false)
+      findOption.where = { ...findOption.where, approved: false };
+
+    return this.userRepository.find(findOption);
   }
 }

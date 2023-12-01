@@ -6,10 +6,13 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Get,
   UseGuards,
+  Query,
+  ParseEnumPipe,
 } from '@nestjs/common';
 import { CreateAdminDto } from './dtos/create-admin.dto';
-import { AdminsService } from './admins.service';
+import { AdminsService, ApprovedOption, RolesOption } from './admins.service';
 import { AdminAuthGuard } from 'src/guards/admin-auth.guard';
 import {
   ApiBadRequestResponse,
@@ -20,10 +23,13 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { CurrentAdmin } from './decorators/current-admin.decorator';
 import { Admin } from './entities/admin.entity';
+import { Serialize } from 'src/interceptors/serialize.interceptor';
+import { ViewUserDto } from 'src/users/dtos/view-user.dto';
 
 @Controller('admins')
 export class AdminsController {
@@ -84,5 +90,45 @@ export class AdminsController {
   @HttpCode(HttpStatus.OK)
   approveUser(@Param('userId', ParseIntPipe) userId: number) {
     return this.adminService.approveUser(userId);
+  }
+
+  @Get('users')
+  @Serialize(ViewUserDto)
+  @UseGuards(AdminAuthGuard)
+  @ApiBearerAuth('JWT-auth-admin')
+  @ApiQuery({
+    name: 'page',
+    required: true,
+    description: 'the number of the page (must be positive >=1)',
+    type: 'number',
+  })
+  @ApiQuery({
+    name: 'role',
+    required: true,
+    description: 'the role of the needed users',
+    type: 'string',
+    enum: RolesOption,
+  })
+  @ApiQuery({
+    name: 'approved',
+    required: true,
+    description: 'the approved status of the needed users',
+    type: 'string',
+    enum: ApprovedOption,
+  })
+  @ApiOperation({ summary: 'Used to get the users using different filters' })
+  @ApiOkResponse({
+    description: 'Array of needed users',
+    isArray: true,
+    type: ViewUserDto,
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized access' })
+  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
+  getUsers(
+    @Query('page', ParseIntPipe) page: number,
+    @Query('role', new ParseEnumPipe(RolesOption)) role: string,
+    @Query('approved', new ParseEnumPipe(ApprovedOption)) approved: string,
+  ) {
+    return this.adminService.getUsers(page, role, approved);
   }
 }
