@@ -26,4 +26,8 @@ export class UsersService {
     if (!email) return null;
     return this.userRepository.findOne({ where: { email: ILike(email) } });
   }
+
+  findUserById(id: number) {
+    return this.userRepository.findOne({ where: { id: id } });
+  }
 }
