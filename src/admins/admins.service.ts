@@ -50,6 +50,11 @@ export class AdminsService {
     });
   }
 
+  findUserById(id: number) {
+    if (!id) return null;
+    return this.userRepository.findOne({ where: { id: id } });
+  }
+
   findUserByEmail(email: string) {
     if (!email) return null;
     return this.userRepository.findOne({ where: { email: ILike(email) } });
@@ -116,5 +121,19 @@ export class AdminsService {
       role: 'Admin',
       approved: true,
     };
+  }
+
+  async approveUser(userId: number) {
+    const user = await this.findUserById(userId);
+    if (!user) throw new NotFoundException('User not found');
+
+    if (user.approved)
+      throw new BadRequestException('User is already approved');
+
+    user.approved = true;
+
+    await this.userRepository.save(user);
+
+    return { message: 'User Approved Succesfully' };
   }
 }
