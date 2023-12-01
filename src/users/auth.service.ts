@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UsersService } from './users.service';
 import { JwtService } from '@nestjs/jwt';
@@ -57,5 +61,34 @@ export class AuthService {
       role: createdUser.role,
       approved: createdUser.approved,
     };
+  }
+
+  async signin(username: string, password: string) {
+    try {
+      return await this.adminService.signin(username, password);
+    } catch (err) {
+      const user = await this.userService.findUserByUsername(username);
+
+      if (!user) throw new NotFoundException('User not found');
+
+      const [salt, storedHash] = user.password.split('.');
+
+      const hash = (await scrypt(password, salt, 32)) as Buffer;
+      if (storedHash !== hash.toString('hex'))
+        throw new BadRequestException('Wrong username and password');
+
+      const payload = {
+        userId: user.id,
+        username: user.username,
+        role: user.role,
+      };
+      console.log(`Returing ${user.role} token`);
+      const token = await this.jwtService.signAsync(payload);
+      return {
+        accessToken: token,
+        role: user.role,
+        approved: user.approved,
+      };
+    }
   }
 }

@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Admin } from './entities/admin.entity';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateAdminDto } from './dtos/create-admin.dto';
 import { User } from 'src/users/entities/user.entity';
@@ -28,22 +28,26 @@ export class AdminsService {
 
   findAdminByUsername(username: string) {
     if (!username) return null;
-    return this.adminRepository.findOne({ where: { username: username } });
+    return this.adminRepository.findOne({
+      where: { username: ILike(username) },
+    });
   }
 
   findAdminByEmail(email: string) {
     if (!email) return null;
-    return this.adminRepository.findOne({ where: { email: email } });
+    return this.adminRepository.findOne({ where: { email: ILike(email) } });
   }
 
   findUserByUsername(username: string) {
     if (!username) return null;
-    return this.userRepository.findOne({ where: { username: username } });
+    return this.userRepository.findOne({
+      where: { username: ILike(username) },
+    });
   }
 
   findUserByEmail(email: string) {
     if (!email) return null;
-    return this.userRepository.findOne({ where: { email: email } });
+    return this.userRepository.findOne({ where: { email: ILike(email) } });
   }
 
   async signup(adminData: CreateAdminDto) {

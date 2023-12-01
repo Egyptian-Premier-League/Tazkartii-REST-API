@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { CreateUserDto } from './dtos/create-user.dto';
 
 @Injectable()
@@ -17,11 +17,13 @@ export class UsersService {
 
   findUserByUsername(username: string) {
     if (!username) return null;
-    return this.userRepository.findOne({ where: { username: username } });
+    return this.userRepository.findOne({
+      where: { username: ILike(username) },
+    });
   }
 
   findUserByEmail(email: string) {
     if (!email) return null;
-    return this.userRepository.findOne({ where: { email: email } });
+    return this.userRepository.findOne({ where: { email: ILike(email) } });
   }
 }
