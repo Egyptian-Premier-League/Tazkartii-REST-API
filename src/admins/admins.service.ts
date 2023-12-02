@@ -155,6 +155,7 @@ export class AdminsService {
       skip: skip,
       take: MAX_NUMBER_PER_PAGE,
       where: {},
+      order: {},
     };
     if (role !== RolesOption.All)
       findOption.where = { ...findOption.where, role: role };
@@ -163,6 +164,8 @@ export class AdminsService {
       findOption.where = { ...findOption.where, approved: true };
     else if (approved === ApprovedOption.false)
       findOption.where = { ...findOption.where, approved: false };
+
+    findOption.order = { id: 'ASC' };
 
     return this.userRepository.find(findOption);
   }
