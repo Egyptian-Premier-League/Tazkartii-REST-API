@@ -5,12 +5,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Stadium } from './entities/stadium.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { Team } from './entities/team.entity';
 
 @Module({
   controllers: [GeneralController],
   providers: [GeneralService],
   imports: [
-    TypeOrmModule.forFeature([Stadium]),
+    TypeOrmModule.forFeature([Stadium, Team]),
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
         secret: configService.getOrThrow('JWT_SECRET'),

@@ -12,6 +12,8 @@ import { Admin } from './admins/entities/admin.entity';
 import { SeedModule } from './seed/seed.module';
 import { AdminSeed } from './seed/admin.seed';
 import { Stadium } from './general/entities/stadium.entity';
+import { Team } from './general/entities/team.entity';
+import { TeamSeed } from './seed/team.seed';
 
 @Module({
   imports: [
@@ -32,7 +34,7 @@ import { Stadium } from './general/entities/stadium.entity';
             database: config.getOrThrow<string>('DATABASE_NAME'),
             username: config.getOrThrow<string>('DATABASE_USER'),
             password: config.getOrThrow<string>('DATABASE_PASSWORD'),
-            entities: [User, Admin, Stadium],
+            entities: [User, Admin, Stadium, Team],
             logger: 'file',
             logging: false,
             synchronize: true,
@@ -57,9 +59,13 @@ import { Stadium } from './general/entities/stadium.entity';
   providers: [AppService],
 })
 export class AppModule {
-  constructor(private readonly adminSeed: AdminSeed) {}
+  constructor(
+    private readonly adminSeed: AdminSeed,
+    private readonly teamSeed: TeamSeed,
+  ) {}
 
   async onApplicationBootstrap(): Promise<void> {
     await this.adminSeed.seedAdmin();
+    await this.teamSeed.seedTeams();
   }
 }
