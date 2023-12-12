@@ -9,6 +9,7 @@ import {
   Get,
   UseGuards,
   Query,
+  Delete,
   ParseEnumPipe,
   BadRequestException,
 } from '@nestjs/common';
@@ -135,5 +136,35 @@ export class AdminsController {
         'Validation failed (numeric string is expected)',
       );
     return this.adminService.getUsers(page, role, approved);
+  }
+
+  @Delete('delete-user/:userId')
+  @ApiParam({
+    name: 'userId',
+    required: true,
+    description: 'the user id',
+    type: 'number',
+  })
+  @UseGuards(AdminAuthGuard)
+  @ApiBearerAuth('JWT-auth-admin')
+  @ApiOkResponse({
+    description: 'User Deleted Succesfully',
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+          example: 'User Deleted Succesfully',
+        },
+      },
+    },
+  })
+  @ApiOperation({ summary: 'Used to delete a user' })
+  @ApiNotFoundResponse({ description: 'User not found' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized access' })
+  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
+  @HttpCode(HttpStatus.OK)
+  deleteUser(@Param('userId', ParseIntPipe) userId: number) {
+    return this.adminService.deleteUser(userId);
   }
 }

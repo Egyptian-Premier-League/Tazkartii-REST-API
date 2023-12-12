@@ -169,4 +169,13 @@ export class AdminsService {
 
     return this.userRepository.find(findOption);
   }
+
+  async deleteUser(userId: number) {
+    const user = await this.findUserById(userId);
+    if (!user) throw new NotFoundException('User not found');
+
+    await this.userRepository.remove(user);
+
+    return { message: 'User Deleted Succesfully' };
+  }
 }
