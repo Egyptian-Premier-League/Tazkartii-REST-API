@@ -81,6 +81,7 @@ export class AuthService {
         userId: user.id,
         username: user.username,
         role: user.role,
+        approved: user.approved,
       };
       console.log(`Returing ${user.role} token`);
       const token = await this.jwtService.signAsync(payload);
