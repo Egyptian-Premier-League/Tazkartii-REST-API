@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Admin } from 'src/admins/entities/admin.entity';
-import { AdminsService } from 'src/admins/admins.service';
-import { CreateAdminDto } from 'src/admins/dtos/create-admin.dto';
 import { ConfigService } from '@nestjs/config';
 import { Team } from 'src/general/entities/team.entity';
 import * as teamsDataJson from './teams.json';
