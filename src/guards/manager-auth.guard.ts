@@ -28,6 +28,10 @@ export class ManagerAuthGuard implements CanActivate {
       if (payload.role !== 'Manager') {
         throw new UnauthorizedException('Unauthorized access not manager');
       }
+
+      if (!payload.approved) {
+        throw new UnauthorizedException('You must get approved first');
+      }
       // 💡 I'm assigning the payload to the request object here
       // so that I can access it in our route handlers
       request['user'] = payload;
