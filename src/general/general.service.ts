@@ -1,9 +1,21 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Cities } from 'src/users/dtos/create-user.dto';
+import { Stadium } from './entities/stadium.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class GeneralService {
+  constructor(
+    @InjectRepository(Stadium)
+    private readonly stadiumRepository: Repository<Stadium>,
+  ) {}
+
   getCities() {
     return JSON.stringify(Object.values(Cities));
+  }
+
+  getStadiums() {
+    return this.stadiumRepository.find();
   }
 }
