@@ -11,6 +11,7 @@ import { GeneralService } from './general.service';
 import { ManagerAuthGuard } from 'src/guards/manager-auth.guard';
 import { Stadium } from './entities/stadium.entity';
 import { CreateStadiumDto } from './dtos/create-stadium.dto';
+import { Team } from './entities/team.entity';
 
 @Controller('general')
 @ApiTags('general')
@@ -41,6 +42,20 @@ export class GeneralController {
   @ApiInternalServerErrorResponse({ description: 'Internal server error' })
   getStadiums() {
     return this.generalService.getStadiums();
+  }
+
+  @Get('teams')
+  @UseGuards(ManagerAuthGuard)
+  @ApiOkResponse({
+    description: 'Teams',
+    type: Team,
+    isArray: true,
+  })
+  @ApiOperation({ summary: 'Used to get the teams' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized access' })
+  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
+  getTeams() {
+    return this.generalService.getTeams();
   }
 
   @Post('stadium')

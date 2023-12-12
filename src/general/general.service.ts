@@ -4,12 +4,15 @@ import { Cities } from 'src/users/dtos/create-user.dto';
 import { Stadium } from './entities/stadium.entity';
 import { Repository } from 'typeorm';
 import { CreateStadiumDto } from './dtos/create-stadium.dto';
+import { Team } from './entities/team.entity';
 
 @Injectable()
 export class GeneralService {
   constructor(
     @InjectRepository(Stadium)
     private readonly stadiumRepository: Repository<Stadium>,
+    @InjectRepository(Team)
+    private readonly teamRepository: Repository<Team>,
   ) {}
 
   getCities() {
@@ -26,5 +29,9 @@ export class GeneralService {
     await this.stadiumRepository.save(stadium);
 
     return JSON.stringify({ message: 'Stadium Created Succesfully' });
+  }
+
+  getTeams() {
+    return this.teamRepository.find();
   }
 }
