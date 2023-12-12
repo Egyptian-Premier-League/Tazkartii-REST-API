@@ -28,8 +28,6 @@ import {
   ApiQuery,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { CurrentAdmin } from './decorators/current-admin.decorator';
-import { Admin } from './entities/admin.entity';
 import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { ViewUserDto } from 'src/users/dtos/view-user.dto';
 
