@@ -11,6 +11,7 @@ import { AdminsModule } from './admins/admins.module';
 import { Admin } from './admins/entities/admin.entity';
 import { SeedModule } from './seed/seed.module';
 import { AdminSeed } from './seed/admin.seed';
+import { Stadium } from './general/entities/stadium.entity';
 
 @Module({
   imports: [
@@ -31,7 +32,7 @@ import { AdminSeed } from './seed/admin.seed';
             database: config.getOrThrow<string>('DATABASE_NAME'),
             username: config.getOrThrow<string>('DATABASE_USER'),
             password: config.getOrThrow<string>('DATABASE_PASSWORD'),
-            entities: [User, Admin],
+            entities: [User, Admin, Stadium],
             logger: 'file',
             logging: false,
             synchronize: true,
