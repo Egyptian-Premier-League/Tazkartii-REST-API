@@ -4,6 +4,7 @@ import { ViewUserDto } from './dtos/view-user.dto';
 import { AuthGuard } from 'src/guards/auth.guard';
 import {
   ApiBearerAuth,
+  ApiCreatedResponse,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
   ApiOperation,
@@ -14,6 +15,7 @@ import { CurrentUser } from './decorators/current-user.decorator';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 import { EditUserDto } from './dtos/edit-user.dto';
+import { EditUserPasswordDto } from './dtos/edit-user-password.dto';
 
 @Controller('users')
 @ApiTags('users')
@@ -43,7 +45,7 @@ export class UsersController {
     summary:
       'Used to edit the user data(Cant send Username or email or password)',
   })
-  @ApiOkResponse({
+  @ApiCreatedResponse({
     description: 'User Data after update',
     type: ViewUserDto,
   })
@@ -51,5 +53,30 @@ export class UsersController {
   @ApiInternalServerErrorResponse({ description: 'Internal server error' })
   updateMyData(@CurrentUser() user: User, @Body() userData: EditUserDto) {
     return this.userService.editUserData(user.id, userData);
+  }
+
+  @Post('edit-my-password')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Used to edit the user password' })
+  @ApiCreatedResponse({
+    description: 'Password Changed Succesfully',
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Password Changed Succesfully',
+        },
+      },
+    },
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized access' })
+  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
+  editUserPassword(
+    @CurrentUser() user: User,
+    @Body() userData: EditUserPasswordDto,
+  ) {
+    return this.userService.editUserPassword(user.id, userData);
   }
 }

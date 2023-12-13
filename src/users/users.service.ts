@@ -1,9 +1,17 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { ILike, Repository } from 'typeorm';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { EditUserDto } from './dtos/edit-user.dto';
+import { EditUserPasswordDto } from './dtos/edit-user-password.dto';
+import { randomBytes, scrypt as _scrypt } from 'crypto';
+import { promisify } from 'util';
+const scrypt = promisify(_scrypt);
 
 @Injectable()
 export class UsersService {
@@ -53,5 +61,32 @@ export class UsersService {
     user.gender = userData.gender;
     const updatedUser = await this.userRepository.save(user);
     return updatedUser;
+  }
+
+  async editUserPassword(userId: number, userData: EditUserPasswordDto) {
+    if (!userId) throw new NotFoundException('User not found');
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+
+    if (userData.password !== userData.confirmPassword)
+      throw new BadRequestException("password doesn't match");
+
+    // Generate a salt
+    const salt = randomBytes(8).toString('hex');
+
+    // Hash the salt and the password
+    const hashedPassword = (await scrypt(
+      userData.password,
+      salt,
+      32,
+    )) as Buffer;
+
+    // Join the hashed result and the salt together
+    const resultPassword = salt + '.' + hashedPassword.toString('hex');
+
+    user.password = resultPassword;
+    await this.userRepository.save(user);
+
+    return { message: 'Password Changed Succesfully' };
   }
 }
