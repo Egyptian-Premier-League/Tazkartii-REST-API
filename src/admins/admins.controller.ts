@@ -26,12 +26,14 @@ import {
   ApiOperation,
   ApiParam,
   ApiQuery,
+  ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { ViewUserDto } from 'src/users/dtos/view-user.dto';
 
 @Controller('admins')
+@ApiTags('admins')
 export class AdminsController {
   constructor(private adminService: AdminsService) {}
 

@@ -1,5 +1,6 @@
 import { Controller, Get, UseGuards, Post, Body } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
@@ -32,6 +33,7 @@ export class GeneralController {
 
   @Get('stadiums')
   @UseGuards(ManagerAuthGuard)
+  @ApiBearerAuth('JWT-auth-manager')
   @ApiOkResponse({
     description: 'Stadiums',
     type: Stadium,
@@ -46,6 +48,7 @@ export class GeneralController {
 
   @Get('teams')
   @UseGuards(ManagerAuthGuard)
+  @ApiBearerAuth('JWT-auth-manager')
   @ApiOkResponse({
     description: 'Teams',
     type: Team,
@@ -60,6 +63,7 @@ export class GeneralController {
 
   @Post('stadium')
   @UseGuards(ManagerAuthGuard)
+  @ApiBearerAuth('JWT-auth-manager')
   @ApiOperation({ summary: 'Used to create a stadium' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized access' })
   @ApiInternalServerErrorResponse({ description: 'Internal server error' })
