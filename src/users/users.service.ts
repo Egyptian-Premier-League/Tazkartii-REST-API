@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { ILike, Repository } from 'typeorm';
 import { CreateUserDto } from './dtos/create-user.dto';
+import { EditUserDto } from './dtos/edit-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -33,9 +34,24 @@ export class UsersService {
   }
 
   async getUserData(userId: number) {
-    if (!userId) return null;
+    if (!userId) throw new NotFoundException('User not found');
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) throw new NotFoundException('User not found');
     return user;
+  }
+
+  async editUserData(userId: number, userData: EditUserDto) {
+    if (!userId) throw new NotFoundException('User not found');
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+    if (!userData.address) user.address = null;
+    else user.address = userData.address;
+    user.birthdate = userData.birthdate;
+    user.city = userData.city;
+    user.firstName = userData.firstName;
+    user.lastName = userData.lastName;
+    user.gender = userData.gender;
+    const updatedUser = await this.userRepository.save(user);
+    return updatedUser;
   }
 }

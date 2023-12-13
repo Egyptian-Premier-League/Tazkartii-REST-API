@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, UseGuards, Post, Body } from '@nestjs/common';
 import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { ViewUserDto } from './dtos/view-user.dto';
 import { AuthGuard } from 'src/guards/auth.guard';
@@ -13,6 +13,7 @@ import {
 import { CurrentUser } from './decorators/current-user.decorator';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
+import { EditUserDto } from './dtos/edit-user.dto';
 
 @Controller('users')
 @ApiTags('users')
@@ -32,5 +33,23 @@ export class UsersController {
   @ApiInternalServerErrorResponse({ description: 'Internal server error' })
   getMyData(@CurrentUser() user: User) {
     return this.userService.getUserData(user.id);
+  }
+
+  @Post('edit-my-data')
+  @Serialize(ViewUserDto)
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({
+    summary:
+      'Used to edit the user data(Cant send Username or email or password)',
+  })
+  @ApiOkResponse({
+    description: 'User Data after update',
+    type: ViewUserDto,
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized access' })
+  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
+  updateMyData(@CurrentUser() user: User, @Body() userData: EditUserDto) {
+    return this.userService.editUserData(user.id, userData);
   }
 }
