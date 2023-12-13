@@ -9,9 +9,9 @@ export class CreateStadiumDto {
 
   @ApiProperty()
   @IsNumber()
-  length: number;
+  rowsNumber: number;
 
   @ApiProperty()
   @IsNumber()
-  width: number;
+  seatsNumber: number;
 }

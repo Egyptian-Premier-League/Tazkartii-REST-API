@@ -13,9 +13,9 @@ export class Stadium {
 
   @Column()
   @ApiProperty()
-  length: number;
+  rowsNumber: number;
 
   @Column()
   @ApiProperty()
-  width: number;
+  seatsNumber: number;
 }
