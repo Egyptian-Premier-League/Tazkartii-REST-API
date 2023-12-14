@@ -1,4 +1,12 @@
-import { Controller, Get, UseGuards, Post, Body } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  UseGuards,
+  Post,
+  Body,
+  Param,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { ViewUserDto } from './dtos/view-user.dto';
 import { AuthGuard } from 'src/guards/auth.guard';
@@ -10,6 +18,7 @@ import {
   ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
+  ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { User } from './entities/user.entity';
@@ -85,9 +94,38 @@ export class UsersController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiOkResponse({ type: Seat, isArray: true })
+  @ApiOperation({ summary: 'Used to get user reservations' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized access' })
   @ApiInternalServerErrorResponse({ description: 'Internal server error' })
   getUserReservations(@CurrentUser() user: User) {
     return this.userService.getMyReservations(user.id);
+  }
+
+  @Post('cancel-reservation/:seatId')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiUnauthorizedResponse({ description: 'Unauthorized access' })
+  @ApiCreatedResponse({
+    description: 'Reservation Canceled successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Reservation Canceled successfully',
+        },
+      },
+    },
+  })
+  @ApiUnprocessableEntityResponse({
+    description: "You can't cancel the match ticket (less than 3 days)",
+  })
+  @ApiOperation({ summary: 'Used to cancel a reservation of a seat' })
+  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
+  cancelReservation(
+    @CurrentUser() user: User,
+    @Param('seatId', ParseIntPipe) seatId: number,
+  ) {
+    return this.userService.cancelReservation(seatId, user.id);
   }
 }

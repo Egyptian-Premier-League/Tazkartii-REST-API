@@ -2,21 +2,26 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
+import * as moment from 'moment';
 import { ILike, Repository } from 'typeorm';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { EditUserDto } from './dtos/edit-user.dto';
 import { EditUserPasswordDto } from './dtos/edit-user-password.dto';
 import { randomBytes, scrypt as _scrypt } from 'crypto';
 import { promisify } from 'util';
+import { Seat } from 'src/general/entities/seat.entity';
 const scrypt = promisify(_scrypt);
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(Seat) private seatRepository: Repository<Seat>,
   ) {}
 
   createUser(userData: CreateUserDto) {
@@ -103,5 +108,31 @@ export class UsersService {
     });
     if (!user) throw new NotFoundException('User not found');
     return user.seats;
+  }
+
+  async cancelReservation(seatId: number, userId: number) {
+    const seat = await this.seatRepository.findOne({
+      where: { id: seatId },
+      relations: ['match', 'user'],
+    });
+    if (!seat) throw new NotFoundException('Seat not found');
+    if (seat.user.id !== userId)
+      throw new UnauthorizedException('Not authorized to do this');
+
+    const today = moment();
+
+    const matchDate = moment(moment(seat.match.date).format('YYYY-MM-DD'));
+
+    const threeDaysBeforeMatch = moment(
+      matchDate.subtract(3, 'days').format('YYYY-MM-DD'),
+    );
+
+    if (!today.isSameOrBefore(threeDaysBeforeMatch))
+      throw new UnprocessableEntityException(
+        "You can't cancel the match ticket (less than 3 days)",
+      );
+
+    await this.seatRepository.remove(seat);
+    return { message: 'Reservation Canceled successfully' };
   }
 }

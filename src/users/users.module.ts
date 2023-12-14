@@ -10,6 +10,7 @@ import { ConfigService } from '@nestjs/config';
 import { AdminsModule } from 'src/admins/admins.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { CurrentUserInterceptor } from './interceptors/current-user.interceptor';
+import { Seat } from 'src/general/entities/seat.entity';
 
 @Module({
   controllers: [UsersController, AuthController],
@@ -19,7 +20,7 @@ import { CurrentUserInterceptor } from './interceptors/current-user.interceptor'
     { provide: APP_INTERCEPTOR, useClass: CurrentUserInterceptor },
   ],
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Seat]),
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
         secret: configService.getOrThrow('JWT_SECRET'),
