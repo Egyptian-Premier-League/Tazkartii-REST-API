@@ -16,6 +16,7 @@ import {
   ApiInternalServerErrorResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiTags,
   ApiUnauthorizedResponse,
   ApiUnprocessableEntityResponse,
@@ -103,6 +104,12 @@ export class UsersController {
 
   @Post('cancel-reservation/:seatId')
   @UseGuards(AuthGuard)
+  @ApiParam({
+    name: 'seatId',
+    required: true,
+    description: 'the seat id',
+    type: 'number',
+  })
   @ApiBearerAuth('JWT-auth')
   @ApiUnauthorizedResponse({ description: 'Unauthorized access' })
   @ApiCreatedResponse({
