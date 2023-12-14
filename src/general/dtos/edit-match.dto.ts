@@ -1,7 +1,7 @@
 import { IsString, IsNotEmpty, IsNumber, IsDateString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateMatchDto {
+export class EditMatchDto {
   @ApiProperty()
   @IsNumber()
   homeTeamId: number;
@@ -13,10 +13,6 @@ export class CreateMatchDto {
   @ApiProperty()
   @IsDateString()
   matchDate: Date;
-
-  @ApiProperty()
-  @IsNumber()
-  stadiumId: number;
 
   @ApiProperty()
   @IsString()
