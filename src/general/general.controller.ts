@@ -13,6 +13,13 @@ import { ManagerAuthGuard } from 'src/guards/manager-auth.guard';
 import { Stadium } from './entities/stadium.entity';
 import { CreateStadiumDto } from './dtos/create-stadium.dto';
 import { Team } from './entities/team.entity';
+import { CreateMatchDto } from './dtos/create-match-dto';
+import { ReserveSeatDto } from './dtos/reserve-seat-dto';
+import { CurrentUser } from 'src/users/decorators/current-user.decorator';
+import { User } from 'src/users/entities/user.entity';
+import { AuthGuard } from 'src/guards/auth.guard';
+import { SeatReservationDocumentation } from 'src/documentation-classes/seat-reservation.documentation';
+import { ErrorSeatReservationDocumentation } from 'src/documentation-classes/error-seat-reservation.documentation';
 
 @Controller('general')
 @ApiTags('general')
@@ -81,5 +88,27 @@ export class GeneralController {
   })
   createStadium(@Body() body: CreateStadiumDto) {
     return this.generalService.createStadium(body);
+  }
+
+  @Post('create-match')
+  @UseGuards(ManagerAuthGuard)
+  @ApiOperation({ summary: 'Used to create a match' })
+  @ApiBearerAuth('JWT-auth-manager')
+  @ApiCreatedResponse({
+    description: 'Match Created Succesfully',
+    schema: {
+      type: 'object',
+      properties: {
+        matchId: {
+          type: 'number',
+          example: 3,
+        },
+      },
+    },
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized access' })
+  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
+  createMatch(@Body() body: CreateMatchDto) {
+    return this.generalService.createMatch(body);
   }
 }
