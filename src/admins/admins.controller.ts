@@ -88,6 +88,7 @@ export class AdminsController {
   @ApiOperation({ summary: 'Used to approve a user' })
   @ApiNotFoundResponse({ description: 'User not found' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized access' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiInternalServerErrorResponse({ description: 'Internal server error' })
   @HttpCode(HttpStatus.OK)
   approveUser(@Param('userId', ParseIntPipe) userId: number) {
@@ -163,6 +164,7 @@ export class AdminsController {
   @ApiNotFoundResponse({ description: 'User not found' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized access' })
   @ApiInternalServerErrorResponse({ description: 'Internal server error' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
   @HttpCode(HttpStatus.OK)
   deleteUser(@Param('userId', ParseIntPipe) userId: number) {
     return this.adminService.deleteUser(userId);
