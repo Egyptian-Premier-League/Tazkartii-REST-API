@@ -14,6 +14,8 @@ import { AdminSeed } from './seed/admin.seed';
 import { Stadium } from './general/entities/stadium.entity';
 import { Team } from './general/entities/team.entity';
 import { TeamSeed } from './seed/team.seed';
+import { Seat } from './general/entities/seat.entity';
+import { Match } from './general/entities/match.entity';
 
 @Module({
   imports: [
@@ -34,7 +36,7 @@ import { TeamSeed } from './seed/team.seed';
             database: config.getOrThrow<string>('DATABASE_NAME'),
             username: config.getOrThrow<string>('DATABASE_USER'),
             password: config.getOrThrow<string>('DATABASE_PASSWORD'),
-            entities: [User, Admin, Stadium, Team],
+            entities: [User, Admin, Stadium, Team, Match, Seat],
             logger: 'file',
             logging: false,
             synchronize: true,
