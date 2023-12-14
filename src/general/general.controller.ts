@@ -12,6 +12,7 @@ import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiQuery,
@@ -136,6 +137,7 @@ export class GeneralController {
     isArray: true,
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized access' })
+  @ApiNotFoundResponse({ description: 'Match not found' })
   @ApiInternalServerErrorResponse({ description: 'Internal server error' })
   reserveSeat(@Body() body: ReserveSeatDto, @CurrentUser() user: User) {
     return this.generalService.reserveSeat(user, body);
