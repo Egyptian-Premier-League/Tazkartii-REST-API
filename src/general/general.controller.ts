@@ -111,4 +111,22 @@ export class GeneralController {
   createMatch(@Body() body: CreateMatchDto) {
     return this.generalService.createMatch(body);
   }
+
+  @Post('reserve-seat')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Used to reserve seats' })
+  @ApiCreatedResponse({
+    type: SeatReservationDocumentation,
+    isArray: true,
+  })
+  @ApiOkResponse({
+    type: ErrorSeatReservationDocumentation,
+    isArray: true,
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized access' })
+  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
+  reserveSeat(@Body() body: ReserveSeatDto, @CurrentUser() user: User) {
+    return this.generalService.reserveSeat(user, body);
+  }
 }
