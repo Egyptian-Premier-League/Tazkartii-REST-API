@@ -13,8 +13,8 @@ import { Seat } from './entities/seat.entity';
 import { Match } from './entities/match.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { User } from 'src/users/entities/user.entity';
-import { CreateMatchDto } from './dtos/create-match-dto';
-import { ReserveSeatDto } from './dtos/reserve-seat-dto';
+import { CreateMatchDto } from './dtos/create-match.dto';
+import { ReserveSeatDto } from './dtos/reserve-seat.dto';
 
 @Injectable()
 export class GeneralService {
