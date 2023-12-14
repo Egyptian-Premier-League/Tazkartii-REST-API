@@ -1,10 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cities } from 'src/users/dtos/create-user.dto';
 import { Stadium } from './entities/stadium.entity';
 import { Repository } from 'typeorm';
 import { CreateStadiumDto } from './dtos/create-stadium.dto';
 import { Team } from './entities/team.entity';
+import { Seat } from './entities/seat.entity';
+import { Match } from './entities/match.entity';
+import { v4 as uuidv4 } from 'uuid';
+import { User } from 'src/users/entities/user.entity';
+import { CreateMatchDto } from './dtos/create-match-dto';
+import { ReserveSeatDto } from './dtos/reserve-seat-dto';
 
 @Injectable()
 export class GeneralService {
@@ -13,6 +23,10 @@ export class GeneralService {
     private readonly stadiumRepository: Repository<Stadium>,
     @InjectRepository(Team)
     private readonly teamRepository: Repository<Team>,
+    @InjectRepository(Seat)
+    private readonly seatRepository: Repository<Seat>,
+    @InjectRepository(Match)
+    private readonly matchRepository: Repository<Match>,
   ) {}
 
   getCities() {
@@ -33,5 +47,109 @@ export class GeneralService {
 
   getTeams() {
     return this.teamRepository.find();
+  }
+
+  async createMatch(matchData: CreateMatchDto) {
+    if (matchData.homeTeamId === matchData.awayTeamId)
+      throw new BadRequestException(
+        'Home team and away team must be different',
+      );
+
+    const homeTeam = await this.teamRepository.findOne({
+      where: { id: matchData.homeTeamId },
+    });
+    const awayTeam = await this.teamRepository.findOne({
+      where: { id: matchData.awayTeamId },
+    });
+
+    if (!homeTeam || !awayTeam)
+      throw new BadRequestException('Invalid teams ids');
+
+    const stadium = await this.stadiumRepository.findOne({
+      where: { id: matchData.stadiumId },
+    });
+
+    if (!stadium) throw new BadRequestException('Invalid stadium id');
+
+    const createdMatch = this.matchRepository.create({
+      date: matchData.matchDate,
+      homeTeam: homeTeam,
+      awayTeam: awayTeam,
+      stadium: stadium,
+      mainReferee: matchData.mainReferre,
+      firstLineMan: matchData.firstLineMan,
+      secondLineMan: matchData.secondLineMan,
+    });
+
+    const savedMatch = await this.matchRepository.save(createdMatch);
+
+    return { matchId: savedMatch.id };
+  }
+
+  async reserveSeat(user: User, seatData: ReserveSeatDto) {
+    const { matchId, seats } = seatData;
+
+    const match = await this.matchRepository.findOne({
+      where: { id: matchId },
+      relations: ['stadium'],
+    });
+
+    if (!match) throw new NotFoundException('Match not found');
+
+    const finalReservationStatus = [];
+
+    for (const seatObject of seats) {
+      const seatNumber = seatObject.seatNumber;
+      const seatRow = seatObject.seatRow;
+
+      const seat = await this.seatRepository.findOne({
+        where: {
+          seatNumber: seatNumber,
+          seatRow: seatRow,
+          match: { id: matchId },
+        },
+      });
+
+      if (seat) {
+        finalReservationStatus.push({
+          seatNumber,
+          seatRow,
+          error: 'Seat is reserved',
+        });
+        continue;
+      }
+
+      if (
+        seatNumber > match.stadium.seatsNumber ||
+        seatRow > match.stadium.seatsNumber
+      ) {
+        finalReservationStatus.push({
+          seatNumber,
+          seatRow,
+          error: 'Invalid seat',
+        });
+        continue;
+      }
+
+      const ticketNumber = uuidv4();
+      const reservedSeat = this.seatRepository.create({
+        seatNumber: seatNumber,
+        seatRow: seatRow,
+        ticketNumber: ticketNumber,
+        match: match,
+        user: user,
+      });
+
+      const savedSeat = await this.seatRepository.save(reservedSeat);
+
+      finalReservationStatus.push({
+        seatId: savedSeat.id,
+        ticketNumber: savedSeat.ticketNumber,
+        seatNumber: savedSeat.seatNumber,
+        seatRow: savedSeat.seatRow,
+        matchId: match.id,
+      });
+    }
+    return finalReservationStatus;
   }
 }
