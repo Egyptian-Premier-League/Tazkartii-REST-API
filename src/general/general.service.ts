@@ -163,4 +163,13 @@ export class GeneralService {
     });
     return matches;
   }
+
+  async getMatchDetails(matchId: number) {
+    const match = await this.matchRepository.findOne({
+      where: { id: matchId },
+      relations: ['seats', 'stadium', 'homeTeam', 'awayTeam'],
+    });
+    if (!match) throw new NotFoundException('Match not found');
+    return match;
+  }
 }
