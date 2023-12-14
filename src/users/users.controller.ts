@@ -16,6 +16,7 @@ import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 import { EditUserDto } from './dtos/edit-user.dto';
 import { EditUserPasswordDto } from './dtos/edit-user-password.dto';
+import { Seat } from 'src/general/entities/seat.entity';
 
 @Controller('users')
 @ApiTags('users')
@@ -78,5 +79,15 @@ export class UsersController {
     @Body() userData: EditUserPasswordDto,
   ) {
     return this.userService.editUserPassword(user.id, userData);
+  }
+
+  @Get('my-reservations')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOkResponse({ type: Seat, isArray: true })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized access' })
+  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
+  getUserReservations(@CurrentUser() user: User) {
+    return this.userService.getMyReservations(user.id);
   }
 }

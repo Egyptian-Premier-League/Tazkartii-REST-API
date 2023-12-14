@@ -89,4 +89,19 @@ export class UsersService {
 
     return { message: 'Password Changed Succesfully' };
   }
+
+  async getMyReservations(userId: number) {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: [
+        'seats',
+        'seats.match',
+        'seats.match.stadium',
+        'seats.match.homeTeam',
+        'seats.match.awayTeam',
+      ],
+    });
+    if (!user) throw new NotFoundException('User not found');
+    return user.seats;
+  }
 }
