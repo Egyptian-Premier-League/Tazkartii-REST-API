@@ -152,4 +152,15 @@ export class GeneralService {
     }
     return finalReservationStatus;
   }
+
+  async getMatches(page: number) {
+    const MAX_NUMBER_PER_PAGE = 10;
+    const matches = await this.matchRepository.find({
+      skip: (page - 1) * MAX_NUMBER_PER_PAGE,
+      take: MAX_NUMBER_PER_PAGE,
+      order: { id: 'ASC' },
+      relations: ['stadium', 'homeTeam', 'awayTeam'],
+    });
+    return matches;
+  }
 }

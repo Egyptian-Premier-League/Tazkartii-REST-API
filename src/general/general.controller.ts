@@ -1,10 +1,20 @@
-import { Controller, Get, UseGuards, Post, Body } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  UseGuards,
+  Post,
+  Body,
+  Query,
+  ParseIntPipe,
+  BadRequestException,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -20,6 +30,7 @@ import { User } from 'src/users/entities/user.entity';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { SeatReservationDocumentation } from 'src/documentation-classes/seat-reservation.documentation';
 import { ErrorSeatReservationDocumentation } from 'src/documentation-classes/error-seat-reservation.documentation';
+import { Match } from './entities/match.entity';
 
 @Controller('general')
 @ApiTags('general')
@@ -128,5 +139,27 @@ export class GeneralController {
   @ApiInternalServerErrorResponse({ description: 'Internal server error' })
   reserveSeat(@Body() body: ReserveSeatDto, @CurrentUser() user: User) {
     return this.generalService.reserveSeat(user, body);
+  }
+
+  @Get('matches')
+  @ApiQuery({
+    name: 'page',
+    required: true,
+    description: 'the number of the page (must be positive >=1)',
+    type: 'number',
+  })
+  @ApiOkResponse({
+    description: 'Array of matches',
+    isArray: true,
+    type: Match,
+  })
+  @ApiOperation({ summary: 'Used to get the matches' })
+  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
+  getMatches(@Query('page', ParseIntPipe) page: number) {
+    if (page < 1)
+      throw new BadRequestException(
+        'Validation failed (numeric string is expected)',
+      );
+    return this.generalService.getMatches(page);
   }
 }
