@@ -15,6 +15,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { User } from 'src/users/entities/user.entity';
 import { CreateMatchDto } from './dtos/create-match.dto';
 import { ReserveSeatDto } from './dtos/reserve-seat.dto';
+import { EditMatchDto } from './dtos/edit-match.dto';
 
 @Injectable()
 export class GeneralService {
@@ -76,7 +77,7 @@ export class GeneralService {
       homeTeam: homeTeam,
       awayTeam: awayTeam,
       stadium: stadium,
-      mainReferee: matchData.mainReferre,
+      mainReferee: matchData.mainReferee,
       firstLineMan: matchData.firstLineMan,
       secondLineMan: matchData.secondLineMan,
     });
@@ -84,6 +85,40 @@ export class GeneralService {
     const savedMatch = await this.matchRepository.save(createdMatch);
 
     return { matchId: savedMatch.id };
+  }
+
+  async editMatch(matchId: number, matchData: EditMatchDto) {
+    const match = await this.matchRepository.findOne({
+      where: { id: matchId },
+    });
+
+    if (!match) throw new NotFoundException('Match not found');
+
+    if (matchData.homeTeamId === matchData.awayTeamId)
+      throw new BadRequestException(
+        'Home team and away team must be different',
+      );
+
+    const homeTeam = await this.teamRepository.findOne({
+      where: { id: matchData.homeTeamId },
+    });
+    const awayTeam = await this.teamRepository.findOne({
+      where: { id: matchData.awayTeamId },
+    });
+
+    if (!homeTeam || !awayTeam)
+      throw new BadRequestException('Invalid teams ids');
+
+    match.awayTeam = awayTeam;
+    match.homeTeam = homeTeam;
+    match.date = matchData.matchDate;
+    match.firstLineMan = matchData.firstLineMan;
+    match.secondLineMan = matchData.secondLineMan;
+    match.mainReferee = matchData.mainReferee;
+
+    await this.matchRepository.save(match);
+
+    return { message: 'Match updated successfully' };
   }
 
   async reserveSeat(user: User, seatData: ReserveSeatDto) {

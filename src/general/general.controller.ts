@@ -8,6 +8,7 @@ import {
   ParseIntPipe,
   BadRequestException,
   Param,
+  Put,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -35,6 +36,7 @@ import { SeatReservationDocumentation } from 'src/documentation-classes/seat-res
 import { ErrorSeatReservationDocumentation } from 'src/documentation-classes/error-seat-reservation.documentation';
 import { Match } from './entities/match.entity';
 import { MatchDetailsDocumentation } from 'src/documentation-classes/match-details.documentation';
+import { EditMatchDto } from './dtos/edit-match.dto';
 
 @Controller('general')
 @ApiTags('general')
@@ -125,6 +127,38 @@ export class GeneralController {
   @ApiInternalServerErrorResponse({ description: 'Internal server error' })
   createMatch(@Body() body: CreateMatchDto) {
     return this.generalService.createMatch(body);
+  }
+
+  @Put('edit-match/:matchId')
+  @UseGuards(ManagerAuthGuard)
+  @ApiOperation({ summary: 'Used to edit a match' })
+  @ApiParam({
+    name: 'matchId',
+    required: true,
+    description: 'the match id',
+    type: 'number',
+  })
+  @ApiCreatedResponse({
+    description: 'Match updated successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Match updated successfully',
+        },
+      },
+    },
+  })
+  @ApiNotFoundResponse({ description: 'Match not found' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized access' })
+  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
+  @ApiBearerAuth('JWT-auth-manager')
+  editMatch(
+    @Param('matchId', ParseIntPipe) matchId: number,
+    @Body() body: EditMatchDto,
+  ) {
+    return this.generalService.editMatch(matchId, body);
   }
 
   @Post('reserve-seat')
