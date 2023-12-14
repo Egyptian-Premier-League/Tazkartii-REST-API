@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Match } from './match.entity';
 
 @Entity()
 export class Stadium {
@@ -18,4 +19,7 @@ export class Stadium {
   @Column()
   @ApiProperty()
   seatsNumber: number;
+
+  @OneToMany(() => Match, (match) => match.stadium)
+  matches: Match[];
 }

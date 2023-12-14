@@ -6,7 +6,10 @@ import {
   Column,
   PrimaryGeneratedColumn,
   Index,
+  OneToMany,
 } from 'typeorm';
+
+import { Seat } from 'src/general/entities/seat.entity';
 
 @Entity()
 export class User {
@@ -46,6 +49,9 @@ export class User {
 
   @Column({ nullable: true })
   address: string;
+
+  @OneToMany(() => Seat, (seat) => seat.user)
+  seats: Seat[];
 
   @AfterInsert()
   logInsert() {
