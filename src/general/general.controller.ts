@@ -21,6 +21,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
+  ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import { GeneralService } from './general.service';
 import { ManagerAuthGuard } from 'src/guards/manager-auth.guard';
@@ -153,6 +154,10 @@ export class GeneralController {
   @ApiNotFoundResponse({ description: 'Match not found' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized access' })
   @ApiInternalServerErrorResponse({ description: 'Internal server error' })
+  @ApiUnprocessableEntityResponse({
+    description:
+      'Can not change the stadium as it is smaller than the current one and there is users who booked in the larger seats',
+  })
   @ApiBearerAuth('JWT-auth-manager')
   editMatch(
     @Param('matchId', ParseIntPipe) matchId: number,
