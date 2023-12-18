@@ -7,7 +7,8 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cities } from 'src/users/dtos/create-user.dto';
 import { Stadium } from './entities/stadium.entity';
-import { Repository, MoreThan } from 'typeorm';
+import { Repository, MoreThan, MoreThanOrEqual } from 'typeorm';
+import * as moment from 'moment';
 import { CreateStadiumDto } from './dtos/create-stadium.dto';
 import { Team } from './entities/team.entity';
 import { Seat } from './entities/seat.entity';
@@ -216,11 +217,15 @@ export class GeneralService {
 
   async getMatches(page: number) {
     const MAX_NUMBER_PER_PAGE = 10;
+    const currentDate = new Date();
     const matches = await this.matchRepository.find({
       skip: (page - 1) * MAX_NUMBER_PER_PAGE,
       take: MAX_NUMBER_PER_PAGE,
       order: { id: 'ASC' },
       relations: ['stadium', 'homeTeam', 'awayTeam'],
+      where: {
+        date: MoreThanOrEqual(currentDate),
+      },
     });
     return matches;
   }
