@@ -11,6 +11,10 @@ export class EditMatchDto {
   awayTeamId: number;
 
   @ApiProperty()
+  @IsNumber()
+  stadiumId: number;
+
+  @ApiProperty()
   @IsDateString()
   matchDate: Date;
 

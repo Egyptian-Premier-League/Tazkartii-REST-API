@@ -38,7 +38,7 @@ import { Match } from './general/entities/match.entity';
             password: config.getOrThrow<string>('DATABASE_PASSWORD'),
             entities: [User, Admin, Stadium, Team, Match, Seat],
             logger: 'file',
-            logging: false,
+            logging: true,
             synchronize: true,
           };
         }

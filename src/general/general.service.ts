@@ -2,11 +2,12 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cities } from 'src/users/dtos/create-user.dto';
 import { Stadium } from './entities/stadium.entity';
-import { Repository } from 'typeorm';
+import { Repository, MoreThan } from 'typeorm';
 import { CreateStadiumDto } from './dtos/create-stadium.dto';
 import { Team } from './entities/team.entity';
 import { Seat } from './entities/seat.entity';
@@ -90,6 +91,7 @@ export class GeneralService {
   async editMatch(matchId: number, matchData: EditMatchDto) {
     const match = await this.matchRepository.findOne({
       where: { id: matchId },
+      relations: ['stadium'],
     });
 
     if (!match) throw new NotFoundException('Match not found');
@@ -106,6 +108,30 @@ export class GeneralService {
       where: { id: matchData.awayTeamId },
     });
 
+    const stadium = await this.stadiumRepository.findOne({
+      where: { id: matchData.stadiumId },
+    });
+
+    if (!stadium) throw new BadRequestException('Invalid stadium');
+
+    if (stadium.id !== match.stadium.id) {
+      const seats = await this.seatRepository.find({
+        where: [
+          { seatRow: MoreThan(stadium.rowsNumber), match: { id: match.id } },
+          {
+            seatNumber: MoreThan(stadium.seatsNumber),
+            match: { id: match.id },
+          },
+        ],
+      });
+      console.log(seats);
+      if (seats.length > 0) {
+        throw new UnprocessableEntityException(
+          'Can not change the stadium as it is smaller than the current one and there is users who booked in the larger seats',
+        );
+      }
+    }
+
     if (!homeTeam || !awayTeam)
       throw new BadRequestException('Invalid teams ids');
 
@@ -115,6 +141,7 @@ export class GeneralService {
     match.firstLineMan = matchData.firstLineMan;
     match.secondLineMan = matchData.secondLineMan;
     match.mainReferee = matchData.mainReferee;
+    match.stadium = stadium;
 
     await this.matchRepository.save(match);
 
