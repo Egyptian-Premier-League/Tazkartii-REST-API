@@ -156,7 +156,7 @@ export class GeneralService {
 
       if (
         seatNumber > match.stadium.seatsNumber ||
-        seatRow > match.stadium.seatsNumber
+        seatRow > match.stadium.rowsNumber
       ) {
         finalReservationStatus.push({
           seatNumber,
