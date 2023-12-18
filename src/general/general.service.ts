@@ -124,7 +124,6 @@ export class GeneralService {
           },
         ],
       });
-      console.log(seats);
       if (seats.length > 0) {
         throw new UnprocessableEntityException(
           'Can not change the stadium as it is smaller than the current one and there is users who booked in the larger seats',
