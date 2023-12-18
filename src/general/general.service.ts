@@ -8,7 +8,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Cities } from 'src/users/dtos/create-user.dto';
 import { Stadium } from './entities/stadium.entity';
 import { Repository, MoreThan, MoreThanOrEqual } from 'typeorm';
-import * as moment from 'moment';
 import { CreateStadiumDto } from './dtos/create-stadium.dto';
 import { Team } from './entities/team.entity';
 import { Seat } from './entities/seat.entity';
