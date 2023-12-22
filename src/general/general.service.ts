@@ -220,7 +220,7 @@ export class GeneralService {
     const matches = await this.matchRepository.find({
       skip: (page - 1) * MAX_NUMBER_PER_PAGE,
       take: MAX_NUMBER_PER_PAGE,
-      order: { id: 'ASC' },
+      order: { date: 'DESC', id: 'ASC' },
       relations: ['stadium', 'homeTeam', 'awayTeam'],
       where: {
         date: MoreThanOrEqual(currentDate),
