@@ -207,6 +207,18 @@ export class GeneralController {
     return this.generalService.getMatches(page);
   }
 
+  @Get('all-matches')
+  @ApiOkResponse({
+    description: 'Array of matches',
+    isArray: true,
+    type: Match,
+  })
+  @ApiOperation({ summary: 'Used to get the matches without pagination' })
+  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
+  getMatchesWithoutPagination() {
+    return this.generalService.getMatchesWithoutPagination();
+  }
+
   @Get('match-details/:matchId')
   @ApiParam({
     name: 'matchId',
