@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cities } from 'src/users/dtos/create-user.dto';
 import { Stadium } from './entities/stadium.entity';
-import { Repository, MoreThan, MoreThanOrEqual } from 'typeorm';
+import { Repository, MoreThan, MoreThanOrEqual, Between } from 'typeorm';
 import { CreateStadiumDto } from './dtos/create-stadium.dto';
 import { Team } from './entities/team.entity';
 import { Seat } from './entities/seat.entity';
@@ -15,6 +15,7 @@ import { Match } from './entities/match.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { User } from 'src/users/entities/user.entity';
 import { CreateMatchDto } from './dtos/create-match.dto';
+import * as moment from 'moment';
 import { ReserveSeatDto } from './dtos/reserve-seat.dto';
 import { EditMatchDto } from './dtos/edit-match.dto';
 
@@ -72,6 +73,58 @@ export class GeneralService {
     });
 
     if (!stadium) throw new BadRequestException('Invalid stadium id');
+
+    const threeDaysAfterMatchDate = moment(
+      moment(matchData.matchDate).startOf('day').format('YYYY-MM-DD'),
+    ).add(3, 'day');
+    const threeDaysBeforeMatchDate = moment(matchData.matchDate).subtract(
+      3,
+      'days',
+    );
+    const matches = await this.matchRepository.find({
+      where: [
+        {
+          homeTeam: { id: homeTeam.id },
+          date: Between(
+            new Date(threeDaysBeforeMatchDate.format('YYYY-MM-DD')),
+            new Date(threeDaysAfterMatchDate.format('YYYY-MM-DD')),
+          ),
+        },
+        {
+          awayTeam: { id: homeTeam.id },
+          date: Between(
+            new Date(threeDaysBeforeMatchDate.format('YYYY-MM-DD')),
+            new Date(threeDaysAfterMatchDate.format('YYYY-MM-DD')),
+          ),
+        },
+        {
+          homeTeam: { id: awayTeam.id },
+          date: Between(
+            new Date(threeDaysBeforeMatchDate.format('YYYY-MM-DD')),
+            new Date(threeDaysAfterMatchDate.format('YYYY-MM-DD')),
+          ),
+        },
+        {
+          awayTeam: { id: awayTeam.id },
+          date: Between(
+            new Date(threeDaysBeforeMatchDate.format('YYYY-MM-DD')),
+            new Date(threeDaysAfterMatchDate.format('YYYY-MM-DD')),
+          ),
+        },
+      ],
+    });
+    if (matches.length > 0)
+      throw new BadRequestException('One of the teams is busy');
+
+    const matchesWithSameStadium = await this.matchRepository.find({
+      where: {
+        stadium: { id: stadium.id },
+        date: new Date(matchData.matchDate),
+      },
+    });
+
+    if (matchesWithSameStadium.length > 0)
+      throw new BadRequestException('Stadium has another match in same day');
 
     const createdMatch = this.matchRepository.create({
       date: matchData.matchDate,
