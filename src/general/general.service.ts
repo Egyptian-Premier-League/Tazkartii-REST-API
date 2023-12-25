@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cities } from 'src/users/dtos/create-user.dto';
 import { Stadium } from './entities/stadium.entity';
-import { Repository, MoreThan, MoreThanOrEqual, Between, Raw } from 'typeorm';
+import { Repository, MoreThan, MoreThanOrEqual, Between } from 'typeorm';
 import { CreateStadiumDto } from './dtos/create-stadium.dto';
 import { Team } from './entities/team.entity';
 import { Seat } from './entities/seat.entity';
