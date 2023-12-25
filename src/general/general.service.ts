@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cities } from 'src/users/dtos/create-user.dto';
 import { Stadium } from './entities/stadium.entity';
-import { Repository, MoreThan, MoreThanOrEqual, Between } from 'typeorm';
+import { Repository, MoreThan, MoreThanOrEqual, Between, Raw } from 'typeorm';
 import { CreateStadiumDto } from './dtos/create-stadium.dto';
 import { Team } from './entities/team.entity';
 import { Seat } from './entities/seat.entity';
@@ -115,14 +115,14 @@ export class GeneralService {
     });
     if (matches.length > 0)
       throw new BadRequestException('One of the teams is busy');
-
-    const matchesWithSameStadium = await this.matchRepository.find({
-      where: {
-        stadium: { id: stadium.id },
-        date: new Date(matchData.matchDate),
-      },
-    });
-
+    const matchDate = moment(matchData.matchDate);
+    const matchesWithSameStadium = await this.matchRepository
+      .createQueryBuilder('match')
+      .where('match.stadiumId = :stadiumId', { stadiumId: stadium.id })
+      .andWhere('CAST(match.date AS DATE) = CAST(:matchDate AS DATE)', {
+        matchDate: matchDate.format('YYYY-MM-DD'),
+      })
+      .getMany();
     if (matchesWithSameStadium.length > 0)
       throw new BadRequestException('Stadium has another match in same day');
 
