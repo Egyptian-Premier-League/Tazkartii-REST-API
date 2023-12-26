@@ -33,7 +33,9 @@ export class Seat {
   @JoinColumn({ name: 'matchId' })
   match: Match;
 
-  @ManyToOne(() => User, (user) => user.seats)
+  @ManyToOne(() => User, (user) => user.seats, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'userId' })
   user: User;
 }
