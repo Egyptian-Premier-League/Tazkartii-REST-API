@@ -1,24 +1,24 @@
-# Tazkartii REST API
+# Tazkartii REST API <a name = "tazkartii"></a>
 
-## 📝 Table of Contents
+## 📝 Table of Contents <a name = "table-of-contents"></a>
 
 - [Tazkartii REST API](#tazkartii)
   - [Table of Contents](#table-of-contents)
   - [Introduction](#introduction)
   - [Features](#features)
-  - [🏁 Getting Started ](#getting-started)
-    - [Prerequisite ](#prerequisite)
-    - [Installation ](#installation)
+  - [Getting Started ](#getting-started)
+    - [Prerequisite ](#req)
+    - [Installation ](#Install)
     - [Running ](#running)
-  - [💻 Built Using ](#built-using)
-  - [📸 Demo Screens ](#demo-screens)
-  - [📃 License ](#license)
+  - [Built Using ](#tech)
+  - [Demo Screens ](#screens)
+  - [License ](#license)
 
-## 📙 Introduction
+## 📙 Introduction <a name = "introduction"></a>
 
 Welcome to **Tazkartii** repository. This project aims to create an online automated ticket reservation system for football matches in the Egyptian Premier League. The system facilitates match management, ticket reservation, and stadium management for both administrators and fans.
 
-## Features
+## Features <a name = "features"></a>
 
 - **Site Administrator**:
   - Approve new users with specific authorities.
@@ -37,7 +37,7 @@ Welcome to **Tazkartii** repository. This project aims to create an online autom
   - Sign in as an existing account.
   - View match details.
 
-## 🏁 Getting Started <a name = "get-started"></a>
+## 🏁 Getting Started <a name = "getting-started"></a>
 
 > This is an list of needed instructions to set up your project locally, to get a local copy up and running follow these
 > instructuins.
