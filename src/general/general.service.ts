@@ -149,6 +149,12 @@ export class GeneralService {
 
     if (!match) throw new NotFoundException('Match not found');
 
+    const stadium = await this.stadiumRepository.findOne({
+      where: { id: matchData.stadiumId },
+    });
+
+    if (!stadium) throw new BadRequestException('Invalid stadium');
+
     if (matchData.homeTeamId === matchData.awayTeamId)
       throw new BadRequestException(
         'Home team and away team must be different',
@@ -161,11 +167,60 @@ export class GeneralService {
       where: { id: matchData.awayTeamId },
     });
 
-    const stadium = await this.stadiumRepository.findOne({
-      where: { id: matchData.stadiumId },
+    const threeDaysAfterMatchDate = moment(
+      moment(matchData.matchDate).startOf('day').format('YYYY-MM-DD'),
+    ).add(3, 'day');
+    const threeDaysBeforeMatchDate = moment(matchData.matchDate).subtract(
+      3,
+      'days',
+    );
+    console.log(threeDaysAfterMatchDate);
+    console.log(threeDaysBeforeMatchDate);
+    const matches = await this.matchRepository.find({
+      where: [
+        {
+          homeTeam: { id: homeTeam.id },
+          date: Between(
+            new Date(threeDaysBeforeMatchDate.format('YYYY-MM-DD')),
+            new Date(threeDaysAfterMatchDate.format('YYYY-MM-DD')),
+          ),
+        },
+        {
+          awayTeam: { id: homeTeam.id },
+          date: Between(
+            new Date(threeDaysBeforeMatchDate.format('YYYY-MM-DD')),
+            new Date(threeDaysAfterMatchDate.format('YYYY-MM-DD')),
+          ),
+        },
+        {
+          homeTeam: { id: awayTeam.id },
+          date: Between(
+            new Date(threeDaysBeforeMatchDate.format('YYYY-MM-DD')),
+            new Date(threeDaysAfterMatchDate.format('YYYY-MM-DD')),
+          ),
+        },
+        {
+          awayTeam: { id: awayTeam.id },
+          date: Between(
+            new Date(threeDaysBeforeMatchDate.format('YYYY-MM-DD')),
+            new Date(threeDaysAfterMatchDate.format('YYYY-MM-DD')),
+          ),
+        },
+      ],
     });
-
-    if (!stadium) throw new BadRequestException('Invalid stadium');
+    console.log(matches);
+    if (matches.length > 0)
+      throw new BadRequestException('One of the teams is busy');
+    const matchDate = moment(matchData.matchDate);
+    const matchesWithSameStadium = await this.matchRepository
+      .createQueryBuilder('match')
+      .where('match.stadiumId = :stadiumId', { stadiumId: stadium.id })
+      .andWhere('CAST(match.date AS DATE) = CAST(:matchDate AS DATE)', {
+        matchDate: matchDate.format('YYYY-MM-DD'),
+      })
+      .getMany();
+    if (matchesWithSameStadium.length > 0)
+      throw new BadRequestException('Stadium has another match in same day');
 
     if (stadium.id !== match.stadium.id) {
       const seats = await this.seatRepository.find({
