@@ -1,73 +1,132 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Tazkartii REST API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## 📝 Table of Contents
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+- [Tazkartii REST API](#tazkartii)
+  - [Table of Contents](#table-of-contents)
+  - [Introduction](#introduction)
+  - [Features](#features)
+  - [🏁 Getting Started ](#getting-started)
+    - [Prerequisite ](#prerequisite)
+    - [Installation ](#installation)
+    - [Running ](#running)
+  - [💻 Built Using ](#built-using)
+  - [📸 Demo Screens ](#demo-screens)
+  - [📃 License ](#license)
 
-## Description
+## 📙 Introduction
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Welcome to **Tazkartii** repository. This project aims to create an online automated ticket reservation system for football matches in the Egyptian Premier League. The system facilitates match management, ticket reservation, and stadium management for both administrators and fans.
 
-## Installation
+## Features
 
-```bash
-$ npm install
+- **Site Administrator**:
+  - Approve new users with specific authorities.
+  - Remove existing users.
+- **EFA Managers**:
+  - Create, edit, and manage match events.
+  - Add new stadiums.
+  - View match details and seat availability.
+- **Customers (Fans)**:
+  - Edit personal data.
+  - View match details and vacant seats.
+  - Reserve vacant seats for future matches.
+  - Cancel reservations before the event.
+- **Guests**:
+  - Register a new account.
+  - Sign in as an existing account.
+  - View match details.
+
+## 🏁 Getting Started <a name = "get-started"></a>
+
+> This is an list of needed instructions to set up your project locally, to get a local copy up and running follow these
+> instructuins.
+
+### Prerequisite <a name = "req"></a>
+
+1. Node.js
+2. PostgreSQL
+
+### Installation <a name = "Install"></a>
+
+1. **_Clone the repository_**
+
+```sh
+$ git clone https://github.com/ZeyadTarekk/Tazkartii-REST-API
 ```
 
-## Running the app
+2. **_Navigate to Tazkartii Folder_**
 
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+```sh
+$ cd Tazkartii-REST-API
 ```
 
-## Test
+### Running <a name = "running"></a>
 
-```bash
-# unit tests
-$ npm run test
+**_Running program_**
 
-# e2e tests
-$ npm run test:e2e
+1. **_Install modules_**
 
-# test coverage
-$ npm run test:cov
+```sh
+npm install
 ```
 
-## Support
+2. **_Create .env.development file and add your environment variables_**
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+- `DATABASE_HOST` Your PostgreSQL connection host like this `localhost`
+- `DATABASE_NAME` The database name that you have created
+- `DATABASE_USER` The user of the database like `postgres`
+- `DATABASE_PASSWORD` The password of the database
+- `DATABASE_PORT` The port of the database like `5432`
+- `JWT_SECRET` any secret to use in JWT
 
-## Stay in touch
+3. **_Start program on development mode_**
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```sh
+npm start:dev
+```
 
-## License
+## 💻 Built Using <a name = "tech"></a>
 
-Nest is [MIT licensed](LICENSE).
+- **NestJS**
+- **PostgreSQL**
+
+## 📸 Demo Screens <a name="screens"></a>
+
+<div align="center">
+  <h3 align="left">Login</h3>
+<img src="./screenshots/login.jpg">
+  <h3 align="left">Signup</h3>
+  <img src="./screenshots/signup.jpg">
+  <h3 align="left">Schedule Fixture</h3>
+  <img src="./screenshots/1.jpg" >
+  <img src="./screenshots/2.jpg">
+
+  <h3 align="left">Match details</h3>
+  <img src="./screenshots/3.jpg" >
+  <h3 align="left">Manager's profile</h3>
+  <img src="./screenshots/4.jpg" >
+  <h3 align="left">League Standing</h3>
+  <img src="./screenshots/5.jpg" >
+  <h3 align="left">Edit Match</h3>
+  <img src="./screenshots/6.jpg" >
+    <h3 align="left">Sidebar</h3>
+  <img src="./screenshots/sidebar.jpg">
+  <h3 align="left">Match's seats</h3>
+  <img src="./screenshots/7.jpg" >
+  <h3 align="left">Payment</h3>
+  <img src="./screenshots/8.jpg" ">
+  <h3 align="left">Tickets</h3>
+  <img src="./screenshots/9.jpg">
+  <h3 align="left">Approved Users</h3>
+  <img src="./screenshots/admin.jpg">
+  <h3 align="left">Pending Users</h3>
+  <img src="./screenshots/dashboard.jpg">
+  <h3 align="left">Responsivity</h3>
+  <img src="./screenshots/mobile.jpg">
+  <img src="./screenshots/responsive.jpg">
+</div>
+
+## 📃 License <a name = "license"></a>
+
+> This software is licensed under MIT License, See [License](https://github.com/ZeyadTarekk/Tazkartii-REST-API/blob/main/LICENSE) for more information @Tazkartii.
