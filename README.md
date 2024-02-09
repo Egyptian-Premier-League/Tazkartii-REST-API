@@ -2,17 +2,15 @@
 
 ## 📝 Table of Contents <a name = "table-of-contents"></a>
 
-- [Tazkartii REST API](#tazkartii)
-  - [Table of Contents](#table-of-contents)
-  - [Introduction](#introduction)
-  - [Features](#features)
-  - [Getting Started ](#getting-started)
-    - [Prerequisite ](#req)
-    - [Installation ](#Install)
-    - [Running ](#running)
-  - [Built Using ](#tech)
-  - [Demo Screens ](#screens)
-  - [License ](#license)
+- [Introduction](#introduction)
+- [Features](#features)
+- [Getting Started ](#getting-started)
+  - [Prerequisite ](#req)
+  - [Installation ](#install)
+  - [Running ](#running)
+- [Built Using ](#tech)
+- [Demo Screens ](#screens)
+- [License ](#license)
 
 ## 📙 Introduction <a name = "introduction"></a>
 
@@ -47,7 +45,7 @@ Welcome to **Tazkartii** repository. This project aims to create an online autom
 1. Node.js
 2. PostgreSQL
 
-### Installation <a name = "Install"></a>
+### Installation <a name = "install"></a>
 
 1. **_Clone the repository_**
 
